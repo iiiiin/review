@@ -1,0 +1,211 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'GIT_REF', defaultValue: '', description: 'refs/heads/<branch>')
+    }
+
+    environment {
+        // 공통 이미지 이름
+        DOCKER_IMAGE_NAME    = "review/backend-app"
+
+        // 네트워크 분리
+        TEST_NETWORK         = "test-net"
+        PROD_NETWORK         = "prod-net"
+
+        // 호스트 포트
+        TEST_PORT            = "8444"
+        PROD_PORT            = "8443"
+
+        // 컨테이너 이름
+        TEST_CONTAINER       = "review-BE-test"
+        PROD_BLUE_CONTAINER  = "review-BE-prod-blue"
+        PROD_GREEN_CONTAINER = "review-BE-prod-green"
+
+        CPU_SET              = "1,3"
+    }
+
+    stages {
+        stage('Determine Branch') {
+            steps {
+                script {
+                    env.ACTUAL_BRANCH = params.GIT_REF.replaceFirst(/^refs\/heads\//, '')
+                    echo "▶ Deploy branch: ${env.ACTUAL_BRANCH}"
+                }
+            }
+        }
+
+        stage('Inject application.yml') {
+            when { expression { env.ACTUAL_BRANCH in ['develop-be'] } }
+            steps {
+                withCredentials([file(credentialsId: 'application.yml', variable: 'APP_YML')]) {
+                    echo "📄 Copying secret application.yml into resources"
+                    sh '''
+                        # 리소스 폴더가 없으면 생성
+                        mkdir -p backend-repo/src/main/resources
+                        chmod -R u+w backend-repo/src/main/resources
+                        # application.yml 덮어쓰기
+                        cp "$APP_YML" backend-repo/src/main/resources/application.yml
+                    '''
+                }
+            }
+        }
+
+        stage('Inject application-docker.yml') {
+            when { expression { env.ACTUAL_BRANCH in ['develop-be'] } }
+            steps {
+                withCredentials([file(credentialsId: 'application-docker.yml', variable: 'APP_YML_DOCKER')]) {
+                    echo "📄 Copying secret application-docker.yml into resources"
+                    sh '''
+                        # 리소스 폴더가 없으면 생성
+                        mkdir -p backend-repo/src/main/resources
+                        chmod -R u+w backend-repo/src/main/resources
+                        # application.yml 덮어쓰기
+                        cp "$APP_YML_DOCKER" backend-repo/src/main/resources/application-docker.yml
+                    '''
+                }
+            }
+        }
+        stage('Inject application-prod.yml') {
+            when { expression { env.ACTUAL_BRANCH in ['main-be'] } }
+            steps {
+                withCredentials([file(credentialsId: 'application-prod.yml', variable: 'APP_YML')]) {
+                    echo "📄 Copying secret application.yml into resources"
+                    sh '''
+                        # 리소스 폴더가 없으면 생성
+                        mkdir -p backend-repo/src/main/resources
+                        chmod -R u+w backend-repo/src/main/resources
+                        # application.yml 덮어쓰기
+                        cp "$APP_YML" backend-repo/src/main/resources/application.yml
+                    '''
+                }
+            }
+        }
+
+        stage('Inject application-docker-prod.yml') {
+            when { expression { env.ACTUAL_BRANCH in ['main-be'] } }
+            steps {
+                withCredentials([file(credentialsId: 'application-docker-prod.yml', variable: 'APP_YML_DOCKER')]) {
+                    echo "📄 Copying secret application-docker.yml into resources"
+                    sh '''
+                        # 리소스 폴더가 없으면 생성
+                        mkdir -p backend-repo/src/main/resources
+                        chmod -R u+w backend-repo/src/main/resources
+                        # application.yml 덮어쓰기
+                        cp "$APP_YML_DOCKER" backend-repo/src/main/resources/application-docker.yml
+                    '''
+                }
+            }
+        }
+
+        stage('Build') {
+            when { expression { env.ACTUAL_BRANCH in ['develop-be','main-be'] } }
+            steps {
+                dir('backend-repo') {
+                    echo "🚀 Building on ${env.ACTUAL_BRANCH}"
+                    sh '''
+                        chmod +x ./gradlew
+                        ./gradlew --no-daemon build -x test
+                    '''
+                }
+            }
+        }
+
+        stage('Test') {
+            when { expression { env.ACTUAL_BRANCH == 'develop-be' } }
+            steps {
+                dir('backend-repo') {
+                    echo "🧪 Running tests on develop-be"
+                    sh './gradlew --no-daemon test'
+                }
+            }
+        }
+
+        stage('Prepare Networks') {
+            steps {
+                // 없으면 생성
+                sh """
+                    docker network create ${TEST_NETWORK} || true
+                    docker network create ${PROD_NETWORK} || true
+                """
+            }
+        }
+
+        stage('Deploy to Test Env') {
+            when { expression { env.ACTUAL_BRANCH == 'develop-be' } }
+            steps {
+                script {
+                    def tag = "${DOCKER_IMAGE_NAME}:dev-${BUILD_NUMBER}"
+                    echo "🐳 Building test image ${tag}"
+                    sh "docker build -t ${tag} backend-repo"
+
+                    echo "🚀 Deploying TEST container (${TEST_CONTAINER}) on port ${TEST_PORT}"
+                    sh """
+                        docker rm -f ${TEST_CONTAINER} || true
+                        docker run -d \\
+                            --name ${TEST_CONTAINER} \\
+                            --cpuset-cpus=${CPU_SET} \\
+                            --network ${TEST_NETWORK} --network-alias backend-test \\
+                            -e SPRING_PROFILES_ACTIVE=docker \\
+                            -p ${TEST_PORT}:8080 \\
+                            ${tag}
+                    """
+                }
+            }
+        }
+
+        stage('Deploy (Blue/Green) to Prod') {
+            when { expression { env.ACTUAL_BRANCH == 'main-be' } }
+            steps {
+                script {
+                    def tag      = "${DOCKER_IMAGE_NAME}:prod-${BUILD_NUMBER}"
+                    def blueName = PROD_BLUE_CONTAINER
+                    def greenName= PROD_GREEN_CONTAINER
+
+                    // 현재 Active 측 검사 (blue first)
+                    def active   = sh(
+                        script: "docker ps -q --filter name=${blueName}",
+                        returnStdout: true
+                    ).trim() ? blueName : greenName
+                    def inactive = (active == blueName) ? greenName : blueName
+
+                    echo "🐳 Building prod image ${tag}"
+                    sh "docker build -t ${tag} backend-repo"
+
+                    echo "🚀 Deploying PROD container (${inactive}) on port ${PROD_PORT}"
+                    sh """
+                        docker rm -f ${inactive} || true
+                        docker run -d \\
+                            --name ${inactive} \\
+                            --cpuset-cpus=${CPU_SET} \\
+                            --network ${PROD_NETWORK} --network-alias backend \\
+                            -e SPRING_PROFILES_ACTIVE=docker \\
+                            -p ${PROD_PORT}:8080 \\
+                            ${tag}
+                    """
+
+                    echo "🔍 Health check on port ${PROD_PORT}"
+                    sh """
+                        for i in {1..10}; do
+                            sleep 3
+                            curl -f http://localhost:${PROD_PORT}/actuator/health && break
+                            if [ \$i -eq 10 ]; then
+                                echo '❌ Health check failed'; exit 1
+                            fi
+                        done
+                    """
+
+                    echo "🛑 Stopping old active container: ${active}"
+                    sh "docker stop ${active} || true"
+                    echo "✅ Production switched to ${inactive}"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "📦 Pipeline finished with status: ${currentBuild.currentResult}"
+        }
+    }
+}
