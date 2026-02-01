@@ -4,7 +4,7 @@ const SocialLoginButtons = () => {
   const handleGoogleLogin = () => {
     // API 명세서에 따라 서버의 OAuth 엔드포인트로 리다이렉션
     // 서버가 구글 OAuth 처리 후 토큰과 함께 프론트엔드 콜백으로 리다이렉션
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://i13e206.p.ssafy.io';
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || window.location.origin;
     const googleAuthUrl = `${baseUrl}/oauth2/authorization/google`;
     
     window.location.href = googleAuthUrl;

@@ -49,8 +49,8 @@ body {
   }
 }
 
-
-/* Pretendard 폰트 */
+/* Pretendard 폰트 (파일 미존재로 주석 처리) */
+/*
 @font-face {
   font-family: 'Pretendard';
   font-weight: 900;
@@ -105,3 +105,4 @@ body {
   font-display: swap;
   src: local('Pretendard Thin'), url('/fonts/Pretendard-Thin.woff2') format('woff2'), url('/fonts/Pretendard-Thin.woff') format('woff');
 }
+*/

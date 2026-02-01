@@ -20,58 +20,62 @@
 
 
 ## 🚀 프로젝트 소개 <a id="intro"></a>
-**"[AI 기반 온라인 화상 면접 코칭] 서비스"**
+**"AI 기반 온라인 화상 면접 코칭 서비스"**
 
-Re:View는 **실제 면접 환경과 유사한 모의 면접 환경**을 제공하고,  
-**AI 기반 피드백 및 반복 학습 기능**을 통해 면접 준비에 최적화된 경험을 제공합니다.  
+> **Re:View**는 **실제 면접 환경과 유사한 모의 면접 환경**을 제공하고, **AI 기반 피드백 및 반복 학습 기능**을 통해 면접 준비에 최적화된 경험을 제공합니다.  
 
-- 실시간 **WebRTC 기반 온라인 화상 면접** 지원  
-- 지원서 / 포트폴리오 / 답변 스크립트를 활용한 **맞춤형 질문 생성**  
-- **인성/직무/PT 면접 결과 AI 피드백 제공**  
-- **결과 리포트 제공** (표정 감정 분석, 음성 답변 분석)  
-- Retry 기능을 통한 **반복 학습 지원**  
-- PT 면접 **화이트보드 제공**  
+- **개발 기간** : 2025.07.14 ~ 2025.08.18
+- **플랫폼** : Web (PC/모바일 웹)
+- **개발 인원** : 6명
 
 ### 🔗 [서비스 바로가기](https://i13e206.p.ssafy.io/)
 
 ## 🛠️ 기술 스택 <a id="tech"></a>
 
 ### Frontend
-- React, TypeScript, Vite
-- Tailwind CSS, Axios
-- Zustand (상태 관리)
-- TanStack Query
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?logo=tailwindcss&logoColor=white)
+![Axios](https://img.shields.io/badge/Axios-5A29E4?logo=axios&logoColor=white)
+![Zustand](https://img.shields.io/badge/Zustand-000000?logo=zustand&logoColor=white)
+![TanStack Query](https://img.shields.io/badge/TanStack%20Query-FF4154?logo=reactquery&logoColor=white)
 
 ### Backend
-- Java 17, Spring Boot
-- Spring Security, JWT
-- Spring Data JPA, Spring AI
-- Kafka (비동기 메시지 처리)
+![Java](https://img.shields.io/badge/Java-ED8B00?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?logo=springboot&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-6DB33F?logo=springsecurity&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?logo=jsonwebtokens&logoColor=white)
+![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?logo=spring&logoColor=white)
+![Kafka](https://img.shields.io/badge/Kafka-231F20?logo=apachekafka&logoColor=white)
 
 ### AI
-- OpenAI Whisper (음성 → 텍스트 변환 및 요약)
-- DeepFace (표정 감정 분석)
-- KoBERT (답변 의도 분석)
-- 생성형 LLM (질문 생성)
+![OpenAI Whisper](https://img.shields.io/badge/Whisper-412991)
+![DeepFace](https://img.shields.io/badge/DeepFace-4B0082)
+![KoBERT](https://img.shields.io/badge/KoBERT-0052CC)
+![LLM](https://img.shields.io/badge/LLM-111827)
 
 ### Infra & DevOps
-- Nginx, Jenkins
-- Docker, GitLab CI/CD
-- AWS EC2, S3, RDS
-- Prometheus + Grafana (모니터링)
+![Nginx](https://img.shields.io/badge/Nginx-009639?logo=nginx&logoColor=white)
+![Jenkins](https://img.shields.io/badge/Jenkins-D24939?logo=jenkins&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![GitLab CI](https://img.shields.io/badge/GitLab%20CI-FC6D26?logo=gitlab&logoColor=white)
+![AWS EC2](https://img.shields.io/badge/AWS%20EC2-FF9900?logo=amazonaws&logoColor=white)
+![AWS S3](https://img.shields.io/badge/AWS%20S3-569A31?logo=amazons3&logoColor=white)
+![AWS RDS](https://img.shields.io/badge/AWS%20RDS-527FFF?logo=amazonrds&logoColor=white)
+![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white)
+![Grafana](https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white)
 
 ### Database
-- MySQL
-- Redis
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white)
 
 ### Tools
-- Git
-- Gitlab
-- Jira
-- Notion
-- MatterMost
-
----
+![Git](https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white)
+![GitLab](https://img.shields.io/badge/GitLab-FC6D26?logo=gitlab&logoColor=white)
+![Jira](https://img.shields.io/badge/Jira-0052CC?logo=jira&logoColor=white)
+![Notion](https://img.shields.io/badge/Notion-000000?logo=notion&logoColor=white)
+![Mattermost](https://img.shields.io/badge/Mattermost-0058CC?logo=mattermost&logoColor=white)
 
 ## 💡 주요 기능 <a id="func"></a>
 
@@ -94,6 +98,7 @@ Re:View는 **실제 면접 환경과 유사한 모의 면접 환경**을 제공�
 ![architecture](./exec/images/review_architecture.png)
 
 - **사용자** → Nginx(443) → Backend(Spring Boot)  
+- **Frontend** → Vite 기반 SPA로 사용자 인터페이스 제공, API/WS 연동  
 - **Backend** → DB(RDS), Cache(Redis), Messaging(Kafka)  
 - **AI 서버** → 면접 영상/음성 분석 → Backend 전달  
 - **OpenVidu** → 실시간 화상 면접 지원  
@@ -119,6 +124,12 @@ KAFKA_BROKER=localhost:9092
 cd backend
 ./gradlew build
 docker build -t backend-app .
+
+# 프론트엔드 로컬 실행
+cd frontend
+npm install -g pnpm
+pnpm install
+pnpm dev
 
 # 프론트엔드 실행
 cd frontend
