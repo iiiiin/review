@@ -44,12 +44,10 @@ export const uploadFilesAPI = async (
     fileType: fileTypes
   };
   
-  console.log('Request data:', requestData);
   
   // 현재 인증 상태 확인
   const authStore = (await import('@/shared/store/authStore')).useAuthStore;
   const { accessToken, isLoggedIn } = authStore.getState();
-  console.log('Auth status:', { isLoggedIn, hasToken: !!accessToken });
   
   try {
     // FormData로 전송 (multipart/form-data)
@@ -65,13 +63,6 @@ export const uploadFilesAPI = async (
     // fileType을 각각의 파라미터로 추가
     fileTypes.forEach(type => {
       formData.append('fileType', type);
-    });
-    
-    console.log('Sending FormData:', {
-      enterpriseName: company,
-      position: job,
-      files: files.map(f => f.name),
-      fileType: fileTypes
     });
     
     const response = await apiClient.post('/api/files', formData, {
@@ -109,7 +100,6 @@ interface ApiResponse<T> {
  */
 export const getUserDocumentsAPI = async (): Promise<UserFile[]> => {
   if (API_MOCKING_ENABLED) {
-    console.log('✅ Mocking enabled: getUserDocumentsAPI');
     return new Promise(resolve => {
       setTimeout(() => {
         resolve([

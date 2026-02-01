@@ -18,7 +18,6 @@ export interface Job {
 // 회사 목록을 가져오는 API
 export const getCompaniesAPI = async (): Promise<Company[]> => {
   if (API_MOCKING_ENABLED) {
-    console.log('✅ Mocking enabled: getCompaniesAPI');
     return new Promise(resolve => {
       setTimeout(() => {
         resolve([
@@ -52,7 +51,6 @@ export const getCompaniesAPI = async (): Promise<Company[]> => {
 
   try {
     const response = await apiClient.get('/api/company') as any;
-    console.log(response.result);
     // API 응답 구조에 따라 처리
     if (response.result && Array.isArray(response.result)) {
       // result 배열인 경우 (실제 API 응답 구조)
@@ -79,7 +77,6 @@ export const getCompaniesAPI = async (): Promise<Company[]> => {
 // 특정 회사의 직무 목록을 가져오는 API
 export const getJobsByCompanyAPI = async (companyId: string): Promise<Job[]> => {
   if (API_MOCKING_ENABLED) {
-    console.log('✅ Mocking enabled: getJobsByCompanyAPI');
     return new Promise(resolve => {
       setTimeout(() => {
         resolve([
@@ -125,7 +122,6 @@ export const getJobsByCompanyAPI = async (companyId: string): Promise<Job[]> => 
 // 기존 직무 목록 API (하위 호환성을 위해 유지)
 export const getJobsAPI = async (): Promise<string[]> => {
   if (API_MOCKING_ENABLED) {
-    console.log('✅ Mocking enabled: getJobsAPI');
     return new Promise(resolve => {
       setTimeout(() => {
         resolve([

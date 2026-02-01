@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
         cookieDomainRewrite: 'localhost'
       },
      '/oauth2': {                                  // ✅ OAuth 엔드포인트도 프록시
-      target: 'https://i13e206.p.ssafy.io',
+      target: env.VITE_API_BASE_URL || 'http://localhost:8080',
       changeOrigin: true,
       secure: true,
       cookieDomainRewrite: 'localhost',

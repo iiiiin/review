@@ -27,20 +27,13 @@ apiClient.interceptors.request.use(
     // authStore에 'token' 상태가 추가되어야 정상 동작
     const { accessToken } = useAuthStore.getState();
     
-    console.log('=== API 요청 인터셉터 ===');
-    console.log('요청 URL:', config.url);
-    console.log('요청 메서드:', config.method);
-    console.log('accessToken 존재:', !!accessToken);
-    console.log('accessToken 길이:', accessToken?.length);
     
     if (accessToken) {
       // 헤더에 'Bearer 토큰' 형식으로 인증 정보를 추가
       // 로그인 상태에서 API 요청 보낼 수 있게 처리
       // 서버는 API에서 이 토큰을 확인해서 사용자 인증 확인
       config.headers.Authorization = `Bearer ${accessToken}`;
-      console.log('Authorization 헤더 추가됨');
     } else {
-      console.log('accessToken이 없어서 Authorization 헤더 추가 안됨');
     }
     
     return config;
@@ -130,7 +123,6 @@ apiClient.interceptors.response.use(
         // 로그아웃된 사용자이거나 유효하지 않은 refreshToken인 경우
         if (errorMessage === '로그아웃된 사용자입니다.' || 
             errorMessage === '유효하지 않은 refreshToken 토큰입니다.') {
-          console.log('RefreshToken 무효화 - 로그아웃 처리');
         }
         
         processQueue(error, null);
